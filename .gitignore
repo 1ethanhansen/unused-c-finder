@@ -102,3 +102,13 @@ venv.bak/
 
 # mypy
 .mypy_cache/
+
+#linux code
+linux-rcu/
+cscope_build.sh
+cscope.po.out
+cscope.out
+cscope.in.out
+
+#outputs
+unneeded.md
