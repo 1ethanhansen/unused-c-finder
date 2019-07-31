@@ -20,7 +20,8 @@ import subprocess
 import sys
 
 file_func_dict = {}
-# Exit if no file to parse given
+double_check_list = []
+# exit if no file to parse given
 if (len(sys.argv) == 1):
 	sys.exit("ERROR: no file loc given")
 file_name = sys.argv[1]
@@ -35,21 +36,53 @@ functions_decoded = functions_files_byte.decode()
 functions_files_list = functions_decoded.split("\n")
 
 # for each function, use cscope to check if the function is called
-for item in functions_files_list:
+for item in functions_files_list[:-1]:
 	# Split the string combo of function name and path it came from
 	# into the function and the last three parts of the part
 	split_up_loc = item.split("/")
 	func_name = split_up_loc[0]
-	if (len(func_name) == 0):
-		print("Skipping empty function")
-		continue
 	final_file_name = "/".join(split_up_loc[-3:])
 
 	# use csope to check where function is called in code
 	out = subprocess.check_output(
 		["cscope -d -f cscope.out -R -L3 {}".format(func_name)], shell=True)
-	# if not called anywhere, add func to the dict
+	# if not called anywhere, double check if passed somewhere
 	if (len(out) == 0):
+		double_check_list.append((func_name, final_file_name))
+
+# for each (func, path) tuple, use find c-symbol to look for uses
+for pair in double_check_list:
+	func_name = pair[0]
+	# find all instances of c-symbol in code
+	out = subprocess.check_output(
+		["cscope -d -f cscope.out -R -L0 {}".format(func_name)], shell=True)
+	out_decoded = out.decode()
+	out_list = out_decoded.split("\n")
+	used = False
+	# for each found c-symbol
+	for found in out_list:
+		num_func_names = found.count(func_name)
+		# if function name appears multiple times in line, get last
+		if num_func_names > 1:
+			index = found.rfind(func_name)
+		else:
+			index = found.find(func_name)
+		# if it was actually found, see if next char is "("
+		if index is not -1:
+			next_index = index + len(func_name)
+			try:
+				next_char = found[next_index]
+			except:
+				used = True
+				break
+			# if next char is not "(", then it is used somewhere
+			if next_char != "(":
+				print(next_char)
+				used = True
+				break
+	# if all we found was function declarations
+	if not used:
+		final_file_name = pair[1]
 		# Check to make sure we can append to an entry that exists
 		if (final_file_name in file_func_dict):
 			file_func_dict[final_file_name].append(func_name)
