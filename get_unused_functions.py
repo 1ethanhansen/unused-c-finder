@@ -77,7 +77,6 @@ for pair in double_check_list:
 				break
 			# if next char is not "(", then it is used somewhere
 			if next_char != "(":
-				print(next_char)
 				used = True
 				break
 	# if all we found was function declarations
@@ -92,7 +91,7 @@ for pair in double_check_list:
 # open the output file and write as markdown
 with open("unneeded.md", "w+") as unneeded_file:
 	for source_file, func_list in file_func_dict.items():
-		unneeded_file.write("#  {}\n".format(source_file))
+		unneeded_file.write("# {}\n".format(source_file))
 		for func in func_list:
 			unneeded_file.write("* {}\n".format(func))
 
