@@ -103,12 +103,17 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-#linux code
+# Linux code
 linux-rcu/
 cscope_build.sh
 cscope.po.out
 cscope.out
 cscope.in.out
 
-#outputs
+# Outputs
 unneeded.md
+unneeded-variables.md
+unneeded-functions.md
+
+# Vim stuff
+*.swp
