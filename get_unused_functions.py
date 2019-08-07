@@ -61,12 +61,7 @@ for pair in double_check_list:
 	used = False
 	# for each found c-symbol
 	for found in out_list:
-		num_func_names = found.count(func_name)
-		# if function name appears multiple times in line, get last
-		if num_func_names > 1:
-			index = found.rfind(func_name)
-		else:
-			index = found.find(func_name)
+		index = found.rfind(func_name)
 		# if it was actually found, see if next char is "("
 		if index is not -1:
 			next_index = index + len(func_name)
@@ -89,7 +84,7 @@ for pair in double_check_list:
 			file_func_dict[final_file_name] = [func_name]
 
 # open the output file and write as markdown
-with open("unneeded.md", "w+") as unneeded_file:
+with open("unneeded-functions.md", "w+") as unneeded_file:
 	for source_file, func_list in file_func_dict.items():
 		unneeded_file.write("# {}\n".format(source_file))
 		for func in func_list:
