@@ -114,6 +114,7 @@ cscope.in.out
 unneeded.md
 unneeded-variables.md
 unneeded-functions.md
+unneeded-macros.md
 
 # Vim stuff
 *.swp
